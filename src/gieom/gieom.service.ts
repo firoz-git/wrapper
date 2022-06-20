@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UseInterceptors } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AxiosRequestConfig } from 'axios';
 import axios from 'axios';
 import { firstValueFrom, lastValueFrom, map } from 'rxjs';
+import * as FormData from 'form-data';
+import { Express } from 'express';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Injectable()
 export class GieomService {
@@ -15,23 +18,21 @@ export class GieomService {
       'https://digitalvalidator.ai:444/generateid/?token=132926D4-B75E-4AE3-BF4A-A0CB99417EC5',
     );
   }
-
   async upload(data): Promise<any> {
-    console.log(data);
-    return axios.post('https://digitalvalidator.ai:444/upload', data, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    });
-
-    // const requestConfig: AxiosRequestConfig = {
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //   },
-    // };
-    // return await axios.post(
-    //   'https://digitalvalidator.ai:444/upload',
-    //   data,
-    //   requestConfig,
-    // );
+    // console.log(data .body);
+    const formData = new FormData();
+    formData.append('doctype', data.body.doctype);
+    formData.append('userid', data.body.userid);
+    formData.append('image', data.body.image);
+    console.log(formData.getHeaders());
+    const result = await axios.post(
+      'https://digitalvalidator.ai:444/upload',
+      formData,
+      {
+        headers: formData.getHeaders(),
+      },
+    );
+    return result;
   }
   async getprocess(): Promise<any> {
     // return axios.get(

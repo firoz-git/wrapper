@@ -1,10 +1,19 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { GieomService } from './gieom.service';
 import { Request } from '@nestjs/common';
 import { Query } from '@nestjs/common';
 import { query } from 'express';
 import { uploadDTO } from './upload';
 import FormData from 'form-data';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('gieom')
 export class GieomController {
@@ -18,18 +27,10 @@ export class GieomController {
   }
 
   @Post('/upload')
-  async upload(@Request() data): Promise<any> {
-    console.log(data);
-    const form = new FormData();
-    form.append('doctype', data.doctype);
-    form.append('userid', data.userid);
-    form.append('image', data.image[0]);
-
-    console.log(form);
-
-    // const response = await this.gieomService.upload(form);
-    // console.log(response);
-    // return response;
+  async upload(@Request() data: any, @Body() Body): Promise<any> {
+    const response = await this.gieomService.upload(data);
+    console.log(response);
+    return response;
   }
 
   @Get('/processfile')
